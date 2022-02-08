@@ -1,65 +1,83 @@
-import { Hash } from "crypto";
-import express, { Request, Response, NextFunction } from "express";
+import * as dotenv from "dotenv";
+dotenv.config();
+import { User, Account, AccountType } from "./db/models";
+import express, { RequestHandler } from "express";
+import userrouter from "./routes/userroutes";
 
 const app = express();
+app.use(express.json());
+app.use(userrouter);
 const port = 3000;
 
 app.listen(port, () => {
   console.log(`Application running on port ${port}.`);
 });
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  password?: Hash; // Rätt typ? Använda bcrypt kanske?
-  tags: Number[];
-  favorites: string[];
-  articles: string[];
-  account: string;
-}
-
-const getUsers = (request: Request, response: Response, next: NextFunction) => {
+const getUsers: RequestHandler = (req, res, next) => {
   let users: User[] = [
     {
       id: "1",
       name: "Romina",
       email: "romina@iths.se",
-      tags: [1, 2, 3],
+      password: "grillkorv",
+      tags: ["1", "2", "3"],
       favorites: ["fav1", "fav2"],
       articles: ["article1", "article2"],
-      account: "basic",
+      account: {
+        payment: "card",
+        type: AccountType.basic,
+        freeMonthExpires: new Date(),
+        notifications: true,
+      },
     },
     {
       id: "2",
       name: "Pelle",
       email: "pelle@iths.se",
-      tags: [1, 2, 3, 4, 5, 6],
+      password: "grillkorv",
+      tags: ["1", "2", "3"],
       favorites: ["fav1", "fav2", "fav3"],
       articles: ["article1", "article2", "article3"],
-      account: "family",
+      account: {
+        payment: "card",
+        type: AccountType.family,
+        freeMonthExpires: new Date(),
+        notifications: false,
+      },
     },
     {
       id: "3",
       name: "Azeb",
       email: "azeb@iths.se",
-      tags: [1, 2, 3, 4],
+      password: "grillkorv",
+      tags: ["1", "2", "3"],
       favorites: ["fav1", "fav2", "fav3", "fav4"],
       articles: ["article1", "article2", "article3", "article4"],
-      account: "family",
+      account: {
+        payment: "card",
+        type: AccountType.basic,
+        freeMonthExpires: new Date(),
+        notifications: true,
+      },
     },
     {
       id: "4",
       name: "Kaj",
       email: "kaj@iths.se",
-      tags: [1, 2, 3, 4, 5, 6],
+      password: "grillkorv",
+      tags: ["1", "2", "3"],
       favorites: ["fav1", "fav2", "fav3"],
       articles: ["article1", "article2"],
-      account: "basic",
+      account: {
+        payment: "card",
+        type: AccountType.basic,
+        freeMonthExpires: new Date(),
+        notifications: false,
+      },
     },
   ];
 
-  response.status(200).json(users);
+  res.status(200).json(users);
 };
 
 app.get("/users", getUsers);

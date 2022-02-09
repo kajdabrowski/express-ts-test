@@ -2,8 +2,6 @@ import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
 import { setDoc, addDoc, getDoc } from "firebase/firestore";
 
-console.log(process.env);
-
 admin.initializeApp({
   credential: admin.credential.cert({
     projectId: process.env.PROJECT_ID,

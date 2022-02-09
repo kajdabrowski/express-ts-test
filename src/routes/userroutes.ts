@@ -10,4 +10,8 @@ userrouter.post("/login", userController.login);
 
 userrouter.get("/", auth, userController.getAll);
 
+userrouter.put("/update", auth, userController.update);
+
+userrouter.delete("/remove", auth, userController.remove);
+
 export default userrouter;

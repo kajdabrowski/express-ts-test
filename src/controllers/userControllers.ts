@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { db } from "../db/client";
-import { uuid } from "uuidv4";
+import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -19,7 +19,7 @@ export const register: RequestHandler = async (req, res, next) => {
     const { name, email, password, account } = req.body;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const userId = uuid();
+    const userId = uuidv4();
     const userRef = db.collection("users");
     const userSnapshot = await userRef.where("email", "==", email).get();
     if (userSnapshot.docs.length) {
@@ -70,5 +70,35 @@ export const login: RequestHandler = async (req, res, next) => {
     }
   } catch (error) {
     res.json({ error });
+  }
+};
+
+export const update: RequestHandler = async (req, res, next) => {
+  if (req.body.email) {
+    const userSnapshot = await db
+      .collection("users")
+      .where("email", "==", req.body.email)
+      .get();
+    if (userSnapshot.docs.length) {
+      res.json({ message: "Email already exists" });
+      return;
+    }
+  }
+  try {
+    //@ts-ignore
+    await db.collection("users").doc(req.user.id).update(req.body);
+    res.json({ message: "User updated" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const remove: RequestHandler = async (req, res, next) => {
+  try {
+    //@ts-ignore
+    await db.collection("users").doc(req.user.id).delete();
+    res.json({ message: "User successfully deleted" });
+  } catch (error) {
+    next(error);
   }
 };

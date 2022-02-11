@@ -11,9 +11,41 @@ export interface Article extends Content {
     headline: string;
     preamble: string;
     body: object;
-    author: object;
-    image: object[];
-    featureImage: object;
-    tags: object;
+    author: Author;
+    images: ContentImage[];
+    featureImage: ContentImage;
+    tags: Tag[];
+  };
+}
+
+export interface Author extends Content {
+  fields: {
+    name: string;
+    email: string;
+    articles: Article[];
+    image: ContentImage;
+  };
+}
+
+export interface ContentImage extends Content {
+  fields: {
+    file: {
+      url: string;
+    };
+  };
+}
+
+export interface Celebrity extends Content {
+  fields: {
+    name: string;
+    bio: object;
+    images: ContentImage[];
+    articles: Article[];
+  };
+}
+
+export interface Tag extends Content {
+  fields: {
+    name: string;
   };
 }

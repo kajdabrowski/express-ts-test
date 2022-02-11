@@ -21,11 +21,12 @@ export const register: RequestHandler = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     const userId = uuidv4();
     const userRef = db.collection("users");
-    const userSnapshot = await userRef.where("email", "==", email).get();
-    if (userSnapshot.docs.length) {
+    const userSnapshot = await userRef.doc(email).get();
+
+    if (userSnapshot.data()) {
       res.json({ message: "Email already exists" });
     } else {
-      const response = await userRef.doc(userId).set({
+      const response = await userRef.doc(email).set({
         id: userId,
         name: name,
         email: email,
@@ -46,13 +47,9 @@ export const register: RequestHandler = async (req, res, next) => {
 export const login: RequestHandler = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    // const user = await db.collection("users").getDoc({ email: email });
     const userRef = db.collection("users");
-    const snapshot = await userRef.where("email", "==", email).get();
-    // snapshot.forEach((doc) => {
-    //   console.log(doc.id, "=>", doc.data());
-    // });
-    const user = snapshot.docs[0].data();
+    const snapshot = await userRef.doc(email).get();
+    const user = snapshot.data();
     console.log(user);
 
     const valid = await bcrypt.compare(password, user.password);
@@ -60,13 +57,9 @@ export const login: RequestHandler = async (req, res, next) => {
       const payload = {
         id: user.id,
         email: user.email,
-        name: user.name,
-        account: user.account,
-        favorites: user.favorites,
-        tags: user.tags,
       };
       const token = jwt.sign(payload, process.env.JWT_SECRET);
-      res.json({ token });
+      res.json({ token, user });
     }
   } catch (error) {
     res.json({ error });
@@ -75,11 +68,8 @@ export const login: RequestHandler = async (req, res, next) => {
 
 export const update: RequestHandler = async (req, res, next) => {
   if (req.body.email) {
-    const userSnapshot = await db
-      .collection("users")
-      .where("email", "==", req.body.email)
-      .get();
-    if (userSnapshot.docs.length) {
+    const userSnapshot = await db.collection("users").doc(req.body.email).get();
+    if (userSnapshot.data()) {
       res.json({ message: "Email already exists" });
       return;
     }

@@ -3,10 +3,13 @@ dotenv.config();
 import { User, Account, AccountType } from "./db/models";
 import express, { RequestHandler } from "express";
 import userrouter from "./routes/userroutes";
+import contentRouter from "./routes/contentroutes";
+import auth from "../src/middlewares/auth";
 
 const app = express();
 app.use(express.json());
 app.use(userrouter);
+app.use(auth, contentRouter);
 const port = 3000;
 
 app.listen(port, () => {

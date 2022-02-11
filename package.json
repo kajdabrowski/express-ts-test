@@ -21,6 +21,7 @@
     "@types/bcryptjs": "^2.4.2",
     "@types/jsonwebtoken": "^8.5.8",
     "bcryptjs": "^2.4.3",
+    "contentful": "^9.1.9",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
     "firebase": "^9.6.6",

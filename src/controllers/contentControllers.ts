@@ -5,11 +5,15 @@ import { client } from "../contentful/contentfulClient";
 import { Article } from "../contentful/models";
 
 export const getArticles: RequestHandler = async (req, res, next) => {
+  console.log("IN CONTROLLER");
+
   try {
     const entries: { items: Article[] } = await client.getEntries({
       content_type: "article",
     });
-    console.log(entries.items[0].sys);
-    res.json({ content: entries.items });
+    // console.log(entries.items[0].sys);
+    console.log(entries.items);
+    // const articles = entries.items;
+    res.json(entries.items);
   } catch (error) {}
 };

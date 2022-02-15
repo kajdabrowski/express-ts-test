@@ -8,7 +8,7 @@ userrouter.post("/register", userController.register);
 
 userrouter.post("/login", userController.login);
 
-userrouter.get("/", auth, userController.getAll);
+userrouter.get("/", auth, userController.get);
 
 userrouter.put("/update", auth, userController.update);
 

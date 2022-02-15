@@ -4,11 +4,14 @@ import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-export const getAll: RequestHandler = async (req, res, next) => {
+export const get: RequestHandler = async (req, res, next) => {
   try {
-    const querySnapshot = await db.collection("users").get();
-    // console.log(querySnapshot.docs);
-    res.json({ users: querySnapshot.docs });
+    const querySnapshot = await db
+      .collection("users")
+      //@ts-ignore
+      .doc(req.user.email)
+      .get();
+    res.json({ users: querySnapshot.data() });
   } catch (error) {
     res.json({ error });
   }
